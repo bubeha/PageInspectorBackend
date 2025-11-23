@@ -2,21 +2,26 @@ package main
 
 import (
 	"log"
-	"net/http"
 
-	"github.com/bubeha/PageInspectorBackend/internal/api"
+	"github.com/bubeha/PageInspectorBackend/internal/app/domain"
 	cfg "github.com/bubeha/PageInspectorBackend/internal/config"
 	"github.com/bubeha/PageInspectorBackend/internal/database"
+	"github.com/bubeha/PageInspectorBackend/internal/interfaces/api"
 	"github.com/bubeha/PageInspectorBackend/internal/repository"
+	"github.com/bubeha/PageInspectorBackend/pkg/httputil"
 )
 
 func main() {
-	config := cfg.Load()
+	config, err := cfg.Load()
 
-	db, dbErr := database.NewDb(config)
+	if err != nil {
+		log.Fatal("Config load error: ", err)
+	}
 
-	if dbErr != nil {
-		log.Fatalf("Failed to connect to database: %v", dbErr)
+	db, err := database.NewDb(config)
+
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
 	defer func(db *database.DB) {
@@ -26,21 +31,21 @@ func main() {
 		}
 	}(db)
 
+	// Create services
 	domainRepo := repository.NewDomainRepository(db)
+	domainService := domain.NewDomainService(domainRepo)
 
-	router := api.Setup(&config.Server, domainRepo)
-
-	log.Printf("========================================")
-	log.Printf("🤖 Server started successfully!")
-	log.Printf("🌐 URL: http://%s:%s", config.Server.Host, config.Server.Port)
-	log.Printf("========================================")
-
-	err := http.ListenAndServe(
-		config.Server.Host+":"+config.Server.Port,
-		router,
+	server := api.NewServer(
+		&api.DataLayer{DomainRepo: domainRepo},
+		&api.Services{DomainService: domainService},
+		&api.Infrastructure{Config: config, DB: db, Responser: &httputil.JSONResponder{}},
 	)
 
-	if err != nil {
-		log.Fatal("ListenAndServe:", err)
+	log.Printf("========================================")
+	log.Printf("Server starting on %s:%s", config.Server.Host, config.Server.Port)
+	log.Printf("========================================")
+
+	if err := server.Run(); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
 	}
 }

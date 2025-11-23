@@ -9,15 +9,20 @@ import (
 	"github.com/google/uuid"
 )
 
-type DomainRepository struct {
+type PostgresDomainRepository struct {
 	db *database.DB
 }
 
-func NewDomainRepository(db *database.DB) *DomainRepository {
-	return &DomainRepository{db: db}
+type DomainRepository interface {
+	FindAll() ([]models.Domain, error)
+	FindByID(id uuid.UUID) (*models.Domain, error)
 }
 
-func (r *DomainRepository) FindAll() ([]models.Domain, error) {
+func NewDomainRepository(db *database.DB) DomainRepository {
+	return &PostgresDomainRepository{db: db}
+}
+
+func (r *PostgresDomainRepository) FindAll() ([]models.Domain, error) {
 	var domains []models.Domain
 	query := "SELECT * FROM domains ORDER BY created_at ASC"
 
@@ -30,7 +35,7 @@ func (r *DomainRepository) FindAll() ([]models.Domain, error) {
 	return domains, nil
 }
 
-func (r *DomainRepository) FindByID(id uuid.UUID) (*models.Domain, error) {
+func (r *PostgresDomainRepository) FindByID(id uuid.UUID) (*models.Domain, error) {
 	var domain models.Domain
 	query := "SELECT * FROM domains WHERE id = $1 LIMIT 1;"
 

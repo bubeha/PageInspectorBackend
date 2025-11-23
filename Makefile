@@ -7,7 +7,7 @@ down:
 	${DOCKER_COMPOSE} down
 
 lint:
-	golangci-lint fmt
+	golangci-lint run
 
 fmt:
 	go fmt ./...

@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"reflect"
 
@@ -34,24 +33,24 @@ type DBConfig struct {
 	SSLMode  string `yaml:"sslMode"`
 }
 
-func Load() *Config {
+func Load() (*Config, error) {
 	data, fileError := os.ReadFile("./config/config.yml")
 
 	if fileError != nil {
-		log.Fatalf("Failed to read config file: %v", fileError)
+		return nil, fmt.Errorf("failed to read config file: %v", fileError)
 	}
 
 	var config Config
 
 	if err := yaml.Unmarshal(data, &config); err != nil {
-		log.Fatalf("Failed to parse config file: %v", err)
+		return nil, fmt.Errorf("failed parsing config file: %v", err)
 	}
 
 	if err := applyEnvParameters(&config); err != nil {
-		log.Fatalf("Failed to apply environment variables: %v", err)
+		return nil, fmt.Errorf("failed to apply environment variables: %v", err)
 	}
 
-	return &config
+	return &config, nil
 }
 
 func applyEnvParameters(c interface{}) error {
