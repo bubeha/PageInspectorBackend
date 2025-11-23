@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: docker/golang/Dockerfile
+      args:
+        GO_VERSION: 1.25
+    environment:
+      APP_ENVIRONMENT: "${APP_ENVIRONMENT}"
+      SERVER_PORT: "${SERVER_PORT}"
+      SERVER_HOST: "app"
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    volumes:
+      - ./:/application
