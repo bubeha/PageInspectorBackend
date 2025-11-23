@@ -16,7 +16,7 @@ type DB struct {
 }
 
 func NewDb(config *config.Config) (*DB, error) {
-	dns := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", config.DB.Host, config.DB.Port, config.DB.User, config.DB.Name, config.DB.Password, "disable")
+	dns := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", config.DB.Host, config.DB.Port, config.DB.User, config.DB.Name, config.DB.Password, config.DB.SSLMode)
 
 	fmt.Println(123, dns)
 
@@ -43,16 +43,17 @@ func (db *DB) Close() error {
 	return db.DB.Close()
 }
 
-// WithTransaction выполняет операцию в транзакции
 func (db *DB) WithTransaction(ctx context.Context, fn func(*sqlx.Tx) error) error {
-	tx, err := db.BeginTxx(ctx, nil)
-	if err != nil {
-		return fmt.Errorf("begin transaction: %w", err)
+	tx, tranErr := db.BeginTxx(ctx, nil)
+	if tranErr != nil {
+		return fmt.Errorf("begin transaction: %w", tranErr)
 	}
 
 	defer func() {
 		if p := recover(); p != nil {
-			tx.Rollback()
+			if err := tx.Rollback(); err != nil {
+				return
+			}
 			panic(p)
 		}
 	}()

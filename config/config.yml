@@ -5,3 +5,6 @@ server:
 
 application:
   environment: "development"
+
+database:
+  sslMode: "disable"

@@ -31,6 +31,7 @@ type DBConfig struct {
 	Name     string `yaml:"name" env:"DB_NAME"`
 	User     string `yaml:"user" env:"DB_USER"`
 	Password string `yaml:"password" env:"DB_PASSWORD"`
+	SSLMode  string `yaml:"sslMode`
 }
 
 func Load() *Config {
