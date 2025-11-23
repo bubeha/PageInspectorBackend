@@ -5,11 +5,23 @@ services:
       dockerfile: docker/golang/Dockerfile
       args:
         GO_VERSION: 1.25
-    environment:
-      APP_ENVIRONMENT: "${APP_ENVIRONMENT}"
-      SERVER_PORT: "${SERVER_PORT}"
-      SERVER_HOST: "app"
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
+    env_file:
+      - '.env'
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      - "POSTGRES_DB=${DB_NAME}"
+      - "POSTGRES_USER=${DB_USER}"
+      - "POSTGRES_PASSWORD=${DB_PASSWORD}"
+    ports:
+      - "5432:5432"
     volumes:
-      - ./:/application
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
