@@ -16,7 +16,7 @@ type DB struct {
 }
 
 func NewDb(config *config.Config) (*DB, error) {
-	dns := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", config.DB.Host, config.DB.Port, config.DB.User, config.DB.Name, config.DB.Password, config.DB.SSLMode)
+	dns := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", config.Database.Host, config.Database.Port, config.Database.User, config.Database.Name, config.Database.Password, config.Database.SSLMode)
 
 	fmt.Println(123, dns)
 
