@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 
 	"github.com/goccy/go-yaml"
 )
@@ -14,26 +15,79 @@ type Config struct {
 }
 
 type ServerConfig struct {
-	Port    string `yaml:"port"`
+	Host    string `yaml:"host" env:"SERVER_HOST"`
+	Port    string `yaml:"port" env:"SERVER_PORT"`
 	Timeout int16  `yaml:"timeout"`
 }
 
 type AppConfig struct {
-	Environment string `yaml:"environment"`
+	Environment string `yaml:"environment" env:"APP_ENVIRONMENT"`
 }
 
 func Load() *Config {
-	data, err := os.ReadFile("./config/config.yml")
+	data, fileError := os.ReadFile("./config/config.yml")
 
-	if err != nil {
-		log.Fatalf("Failed to read config file: %v", err)
+	if fileError != nil {
+		log.Fatalf("Failed to read config file: %v", fileError)
 	}
 
-	var cfg Config
+	var config Config
 
-	err = yaml.Unmarshal(data, &cfg)
+	if err := yaml.Unmarshal(data, &config); err != nil {
+		log.Fatalf("Failed to parse config file: %v", err)
+	}
 
-	fmt.Printf("Port: %v\nTimeout: %v\n\n", cfg.Server.Port, cfg.Server.Timeout)
+	if err := applyEnvParameters(&config); err != nil {
+		log.Fatalf("Failed to apply environment variables: %v", err)
+	}
 
-	return &cfg
+	return &config
+}
+
+func applyEnvParameters(c interface{}) error {
+	if c == nil {
+		return fmt.Errorf("config cannot be nil")
+	}
+
+	v := reflect.ValueOf(c)
+	if v.Kind() != reflect.Ptr {
+		return fmt.Errorf("config must be a pointer")
+	}
+
+	v = v.Elem()
+
+	if v.Kind() != reflect.Struct {
+		return fmt.Errorf("config must point to a struct")
+	}
+
+	t := v.Type()
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Field(i)
+		fieldType := t.Field(i)
+
+		if field.Kind() == reflect.Struct {
+			if err := applyEnvParameters(field.Addr().Interface()); err != nil {
+				return err
+			}
+
+			continue
+		}
+
+		envName := fieldType.Tag.Get("env")
+
+		if envName == "" {
+			continue
+		}
+
+		if envVal := os.Getenv(envName); envVal != "" {
+			if field.CanSet() && field.Kind() == reflect.String {
+				field.SetString(envVal)
+			} else {
+				return fmt.Errorf("field %s has unsupported type %s, only string supported", fieldType.Name, field.Kind())
+			}
+		}
+	}
+
+	return nil
 }

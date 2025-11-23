@@ -13,8 +13,13 @@ func main() {
 
 	router := api.Setup(&config.Server)
 
+	log.Printf("========================================")
+	log.Printf("🤖 Server started successfully!")
+	log.Printf("🌐 URL: http://%s:%s", config.Server.Host, config.Server.Port)
+	log.Printf("========================================")
+
 	err := http.ListenAndServe(
-		":"+config.Server.Port,
+		config.Server.Host+":"+config.Server.Port,
 		router,
 	)
 
