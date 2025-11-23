@@ -14,7 +14,7 @@ func main() {
 	router := api.Setup(&config.Server)
 
 	err := http.ListenAndServe(
-		config.Server.Port,
+		":"+config.Server.Port,
 		router,
 	)
 
