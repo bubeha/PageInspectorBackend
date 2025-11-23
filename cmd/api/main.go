@@ -7,6 +7,7 @@ import (
 	"github.com/bubeha/PageInspectorBackend/internal/api"
 	cfg "github.com/bubeha/PageInspectorBackend/internal/config"
 	"github.com/bubeha/PageInspectorBackend/internal/database"
+	"github.com/bubeha/PageInspectorBackend/internal/repository"
 )
 
 func main() {
@@ -25,7 +26,9 @@ func main() {
 		}
 	}(db)
 
-	router := api.Setup(&config.Server)
+	domainRepo := repository.NewDomainRepository(db)
+
+	router := api.Setup(&config.Server, domainRepo)
 
 	log.Printf("========================================")
 	log.Printf("🤖 Server started successfully!")
