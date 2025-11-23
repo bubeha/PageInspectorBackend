@@ -12,6 +12,7 @@ import (
 type Config struct {
 	Server      ServerConfig `json:"server"`
 	Application AppConfig    `yaml:"application"`
+	DB          DBConfig     `yaml:"db"`
 }
 
 type ServerConfig struct {
@@ -22,6 +23,14 @@ type ServerConfig struct {
 
 type AppConfig struct {
 	Environment string `yaml:"environment" env:"APP_ENVIRONMENT"`
+}
+
+type DBConfig struct {
+	Host     string `yaml:"host" env:"DB_HOST"`
+	Port     string `yaml:"port" env:"DB_PORT"`
+	Name     string `yaml:"name" env:"DB_NAME"`
+	User     string `yaml:"user" env:"DB_USER"`
+	Password string `yaml:"password" env:"DB_PASSWORD"`
 }
 
 func Load() *Config {
