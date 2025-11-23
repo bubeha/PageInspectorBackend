@@ -18,8 +18,6 @@ type DB struct {
 func NewDb(config *config.Config) (*DB, error) {
 	dns := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s", config.Database.Host, config.Database.Port, config.Database.User, config.Database.Name, config.Database.Password, config.Database.SSLMode)
 
-	fmt.Println(123, dns)
-
 	db, contErr := sqlx.Connect("postgres", dns)
 
 	if contErr != nil {
