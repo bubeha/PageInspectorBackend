@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/database"
+	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/log"
 	"github.com/bubeha/PageInspectorBackend/internal/models"
 	"github.com/google/uuid"
 )
@@ -16,6 +17,7 @@ type PostgresDomainRepository struct {
 type DomainRepository interface {
 	FindAll() ([]models.Domain, error)
 	FindByID(id uuid.UUID) (*models.Domain, error)
+	Create(domain *models.Domain) error
 }
 
 func NewDomainRepository(db *database.DB) DomainRepository {
@@ -50,4 +52,28 @@ func (r *PostgresDomainRepository) FindByID(id uuid.UUID) (*models.Domain, error
 	}
 
 	return &domain, nil
+}
+
+func (r *PostgresDomainRepository) Create(domain *models.Domain) error {
+	query := `INSERT INTO domains (name, base_url, status) VALUES (:name, :base_url, :status) RETURNING id`
+
+	rows, err := r.db.NamedQuery(query, domain)
+
+	if err != nil {
+		log.Errorf("failed to insert domain: %s", err)
+
+		return err
+	}
+
+	defer rows.Close()
+
+	if rows.Next() {
+		if rErr := rows.Scan(&domain.ID); rErr != nil {
+			log.Error("failed to scan returned ID", "error", rErr)
+
+			return rErr
+		}
+	}
+
+	return nil
 }

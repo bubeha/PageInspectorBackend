@@ -26,7 +26,7 @@ func NewServer(data *DataLayer, services *Services, infra *Infrastructure) *Serv
 	// Handlers
 	router.Mount("/health", health.NewHealthHandler().Routes())
 	router.Route("/api/v1", func(r chi.Router) {
-		r.Mount("/domains", v1.NewDomainHandler(data.DomainRepo, infra.Responser).Routes())
+		r.Mount("/domains", v1.NewDomainHandler(data.DomainRepo, infra.Responser, *services.DomainService).Routes())
 	})
 
 	return &Server{
