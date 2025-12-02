@@ -3,10 +3,10 @@ package database
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
-	"github.com/bubeha/PageInspectorBackend/internal/config"
+	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/config"
+	log "github.com/bubeha/PageInspectorBackend/internal/infrastructure/log"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -32,7 +32,7 @@ func NewDb(config *config.Config) (*DB, error) {
 		return nil, fmt.Errorf("failed to pint to database: %s", err)
 	}
 
-	log.Printf("Database connected successfully (sqlx)")
+	log.Info("Database connected successfully (sqlx)")
 
 	return &DB{db}, nil
 }

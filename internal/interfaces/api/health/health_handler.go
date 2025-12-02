@@ -1,9 +1,9 @@
 package health
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/log"
 	"github.com/bubeha/PageInspectorBackend/pkg/httputil"
 	"github.com/go-chi/chi/v5"
 )
@@ -22,7 +22,7 @@ func (handler *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {
 	err := handler.responder.JSON(w, "Alive!!!", http.StatusOK)
 
 	if err != nil {
-		log.Printf("Failed to respond to healthcheck: %v", err)
+		log.Infof("Failed to respond to healthcheck: %v", err)
 	}
 }
 

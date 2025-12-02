@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/bubeha/PageInspectorBackend/internal/database"
+	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/database"
 	"github.com/bubeha/PageInspectorBackend/internal/models"
 	"github.com/google/uuid"
 )
