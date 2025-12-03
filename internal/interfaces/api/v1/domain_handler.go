@@ -66,7 +66,7 @@ func (h *DomainHandler) CreateDomainHandlerFunc(w http.ResponseWriter, r *http.R
 	}
 
 	if err := h.domainService.CreateDomain(&entry); err != nil {
-		response.Error(w, err.Error(), http.StatusInternalServerError)
+		response.JsonError(w, err, http.StatusInternalServerError)
 
 		return
 	}
