@@ -169,6 +169,9 @@ func formatValidationError(e validator.FieldError) string {
 	case "starts_with", "ends_with":
 		return fmt.Sprintf("%s must start/end with %s", fieldName, param)
 
+	case "domain":
+		return fmt.Sprintf("%s must be a valid domain name", fieldName)
+
 	default:
 		return fmt.Sprintf("%s has an invalid value", fieldName)
 	}

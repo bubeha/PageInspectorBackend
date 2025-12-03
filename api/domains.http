@@ -4,5 +4,5 @@ Content-Type: application/json
 
 {
   "name": "First",
-  "base_url": "http://shinpapa.by"
+  "base_url": "shinpapa.by"
 }

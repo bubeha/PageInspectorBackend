@@ -18,6 +18,7 @@ type DomainRepository interface {
 	FindAll() ([]models.Domain, error)
 	FindByID(id uuid.UUID) (*models.Domain, error)
 	Create(domain *models.Domain) error
+	ExistByUrl(url string) (bool, error)
 }
 
 func NewDomainRepository(db *database.DB) DomainRepository {
@@ -76,4 +77,14 @@ func (r *PostgresDomainRepository) Create(domain *models.Domain) error {
 	}
 
 	return nil
+}
+
+func (r *PostgresDomainRepository) ExistByUrl(url string) (bool, error) {
+	var exists bool
+
+	query := "SELECT EXISTS(SELECT 1 FROM domains WHERE base_url = $1);"
+
+	err := r.db.QueryRow(query, url).Scan(&exists)
+
+	return exists, err
 }

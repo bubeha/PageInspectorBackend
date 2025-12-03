@@ -1,12 +1,19 @@
 package validator
 
 import (
+	"github.com/bubeha/PageInspectorBackend/pkg/log"
 	"github.com/go-playground/validator/v10"
 )
 
 var (
 	Instance = validator.New()
 )
+
+func Init() {
+	if err := Instance.RegisterValidation("domain", validateDomain); err != nil {
+		log.Errorf("validator init error: %v", err)
+	}
+}
 
 func Validate(i interface{}) error {
 	if err := Instance.Struct(i); err != nil {

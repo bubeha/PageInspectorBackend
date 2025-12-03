@@ -7,6 +7,7 @@ import (
 	"github.com/bubeha/PageInspectorBackend/internal/interfaces/api"
 	"github.com/bubeha/PageInspectorBackend/internal/repository"
 	"github.com/bubeha/PageInspectorBackend/pkg/log"
+	"github.com/bubeha/PageInspectorBackend/pkg/validator"
 )
 
 func main() {
@@ -27,6 +28,8 @@ func main() {
 	log.SetLogger(logger)
 
 	config := initConfig()
+
+	validator.Init()
 
 	db := initDatabase(config)
 
