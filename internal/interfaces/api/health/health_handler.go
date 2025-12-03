@@ -3,8 +3,8 @@ package health
 import (
 	"net/http"
 
-	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/log"
 	"github.com/bubeha/PageInspectorBackend/pkg/httputil"
+	"github.com/bubeha/PageInspectorBackend/pkg/log"
 	"github.com/go-chi/chi/v5"
 )
 

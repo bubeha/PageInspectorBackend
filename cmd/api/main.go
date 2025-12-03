@@ -4,10 +4,10 @@ import (
 	"github.com/bubeha/PageInspectorBackend/internal/app/domain"
 	cfg "github.com/bubeha/PageInspectorBackend/internal/infrastructure/config"
 	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/database"
-	log "github.com/bubeha/PageInspectorBackend/internal/infrastructure/log"
 	"github.com/bubeha/PageInspectorBackend/internal/interfaces/api"
 	"github.com/bubeha/PageInspectorBackend/internal/repository"
 	"github.com/bubeha/PageInspectorBackend/pkg/httputil"
+	"github.com/bubeha/PageInspectorBackend/pkg/log"
 )
 
 func main() {

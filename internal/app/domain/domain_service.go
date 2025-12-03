@@ -1,10 +1,10 @@
 package domain
 
 import (
-	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/validator"
 	"github.com/bubeha/PageInspectorBackend/internal/models"
 	"github.com/bubeha/PageInspectorBackend/internal/repository"
 	"github.com/bubeha/PageInspectorBackend/internal/types"
+	"github.com/bubeha/PageInspectorBackend/pkg/validator"
 )
 
 type Service struct {

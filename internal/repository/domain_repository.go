@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/database"
-	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/log"
 	"github.com/bubeha/PageInspectorBackend/internal/models"
+	"github.com/bubeha/PageInspectorBackend/pkg/log"
 	"github.com/google/uuid"
 )
 

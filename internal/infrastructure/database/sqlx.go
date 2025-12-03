@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/config"
-	log "github.com/bubeha/PageInspectorBackend/internal/infrastructure/log"
+	"github.com/bubeha/PageInspectorBackend/pkg/log"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
