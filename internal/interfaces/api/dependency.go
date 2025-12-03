@@ -5,7 +5,6 @@ import (
 	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/config"
 	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/database"
 	"github.com/bubeha/PageInspectorBackend/internal/repository"
-	"github.com/bubeha/PageInspectorBackend/pkg/httputil"
 )
 
 type DataLayer struct {
@@ -17,7 +16,6 @@ type Services struct {
 }
 
 type Infrastructure struct {
-	DB        *database.DB
-	Config    *config.Config
-	Responser httputil.Responder
+	DB     *database.DB
+	Config *config.Config
 }

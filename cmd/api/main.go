@@ -6,7 +6,6 @@ import (
 	"github.com/bubeha/PageInspectorBackend/internal/infrastructure/database"
 	"github.com/bubeha/PageInspectorBackend/internal/interfaces/api"
 	"github.com/bubeha/PageInspectorBackend/internal/repository"
-	"github.com/bubeha/PageInspectorBackend/pkg/httputil"
 	"github.com/bubeha/PageInspectorBackend/pkg/log"
 )
 
@@ -46,7 +45,7 @@ func main() {
 	server := api.NewServer(
 		&api.DataLayer{DomainRepo: domainRepo},
 		&api.Services{DomainService: domainService},
-		&api.Infrastructure{Config: config, DB: db, Responser: &httputil.JSONResponder{}},
+		&api.Infrastructure{Config: config, DB: db},
 	)
 
 	log.Info("========================================")
