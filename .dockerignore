@@ -1,5 +1,22 @@
-.git
-.dockerignore
-Dockerfile
-.air.toml
-tmp/
+# Build artifacts
+bin/
+*.exe
+*.so
+*.dll
+migrations/
+
+# System files
+.git/
+.gitignore
+.DS_Store
+README.md
+
+# Configs
+.env
+.env.example
+docker-compose*.yml
+Makefile
+
+# VS Code
+.vscode/
+api/
