@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	appAuth "github.com/bubeha/PageInspectorBackend/internal/app/auth"
+	"github.com/bubeha/PageInspectorBackend/internal/interfaces/api/auth"
 	"github.com/bubeha/PageInspectorBackend/internal/interfaces/api/health"
 	v1 "github.com/bubeha/PageInspectorBackend/internal/interfaces/api/v1"
 	"github.com/go-chi/chi/v5"
@@ -25,6 +27,8 @@ func NewServer(data *DataLayer, services *Services, infra *Infrastructure) *Serv
 
 	// Handlers
 	router.Mount("/health", health.NewHealthHandler().Routes())
+	router.Mount("/api/auth", auth.NewAuthHandler(&infra.Config.JWTConfig, appAuth.NewLoginService(appAuth.NewTokenService(&infra.Config.JWTConfig))).Routes())
+
 	router.Route("/api/v1", func(r chi.Router) {
 		r.Mount("/domains", v1.NewDomainHandler(data.DomainRepo, *services.DomainService).Routes())
 	})

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"reflect"
+	"strconv"
+	"time"
 
 	"github.com/goccy/go-yaml"
 )
@@ -12,6 +14,7 @@ type Config struct {
 	Server      ServerConfig `json:"server"`
 	Application AppConfig    `yaml:"application"`
 	Database    DBConfig     `yaml:"database"`
+	JWTConfig   `yaml:jwt`
 }
 
 type ServerConfig struct {
@@ -31,6 +34,13 @@ type DBConfig struct {
 	User     string `yaml:"user" env:"DB_USER"`
 	Password string `yaml:"password" env:"DB_PASSWORD"`
 	SSLMode  string `yaml:"sslMode"`
+}
+
+type JWTConfig struct {
+	PublicKeyPath  string        `yaml:"public_path" env:"JWT_PUBLIC_KEY_PATH"`
+	PrivateKeyPath string        `yaml:"private_path" env:"JWT_PRIVATE_KEY_PATH"`
+	PublicTTL      time.Duration `yaml:"public_ttl" env:"JWT_PUBLIC_TTL"`
+	PrivateTTL     time.Duration `yaml:"private_ttl" env:"JWT_PRIVATE_TTL"`
 }
 
 func Load() (*Config, error) {
@@ -89,12 +99,37 @@ func applyEnvParameters(c interface{}) error {
 			continue
 		}
 
-		if envVal := os.Getenv(envName); envVal != "" {
-			if field.CanSet() && field.Kind() == reflect.String {
-				field.SetString(envVal)
+		envVal := os.Getenv(envName)
+		if envVal == "" {
+			continue
+		}
+
+		if !field.CanSet() {
+			return fmt.Errorf("field %s cannot be set", fieldType.Name)
+		}
+
+		switch field.Kind() {
+		case reflect.String:
+			field.SetString(envVal)
+
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+
+			if fieldType.Type == reflect.TypeOf(time.Duration(0)) {
+				duration, err := time.ParseDuration(envVal)
+				if err != nil {
+					return fmt.Errorf("invalid duration for field %s: %v", fieldType.Name, err)
+				}
+				field.SetInt(int64(duration))
 			} else {
-				return fmt.Errorf("field %s has unsupported type %s, only string supported", fieldType.Name, field.Kind())
+				intVal, err := strconv.ParseInt(envVal, 10, 64)
+				if err != nil {
+					return fmt.Errorf("invalid integer for field %s: %v", fieldType.Name, err)
+				}
+				field.SetInt(intVal)
 			}
+
+		default:
+			return fmt.Errorf("field %s has unsupported type %s", fieldType.Name, field.Kind())
 		}
 	}
 

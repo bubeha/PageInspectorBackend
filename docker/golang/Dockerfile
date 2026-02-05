@@ -24,6 +24,8 @@ WORKDIR /app
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /application/main ./
 COPY --from=builder /application/config ./config
+COPY --from=builder --chown=forge /application/certs/jwt-public.pem /etc/application/keys/jwt-public.pem
+COPY --from=builder --chown=forge /application/certs/jwt-private.pem /etc/application/keys/jwt-private.pem
 
 USER forge
 
